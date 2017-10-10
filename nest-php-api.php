@@ -6,6 +6,8 @@ class Nest
 	private $username;
 	private $password;
 	private $cookieFile;
+	private $object_base_id;
+	private $deviceid;
 
 	public function __construct($username, $password, $debug = false)
 	{
@@ -18,7 +20,7 @@ class Nest
 
 		// Login
 		$response = $this->curlPost('https://home.nest.com/user/login', 'username=' . urlencode($username) . '&password=' . urlencode($password));
-
+		
 		if (($json = json_decode($response)) === false)
 			throw new Exception('Unable to connect to Nest');
 
@@ -26,69 +28,63 @@ class Nest
 		$this->access_token = $json->access_token;
 		$this->user_id = $json->userid;
 		$this->transport_url = $json->urls->transport_url;
+		
+		// First thing to do is get the device id and the base object id to be used later on. 
+		// THIS HAS ONLY BEEN TESTED IN A SYSTEM WITH ONE NEST!!!
+		// Reverse engineered from the website version.
+		$payload = '{"known_bucket_types":["device"],"known_bucket_versions":[]}';
+		$response = $this->curlPost('https://home.nest.com/api/0.1/user/2992035/app_launch', $payload);
+		$response = json_decode($response, true);
+		
+		// Get device id and revision of the first device.
+		$this->deviceid = $response['updated_buckets'][0]['object_key'];		
+		$this->object_base_id = $response['updated_buckets'][0]['object_revision'];
+		
 	}
+	
+	// Boost the hot water for the following number of minutes. 
+	public function setHotWaterBoost($minutes) {
+		
+		// calculate new epooch for the boost. If 0 is passed then set to 0 otherwise calculate.
+		if ($minutes <= 0) $epooch = 0;
+		else $epooch = time() + (60 * $minutes);
+		
+		// reverse engineered from web page, read blog if you want to know more.
+		// credit to https://github.com/gboudreau/nest-api/issues/22 for help recognising that I could ignore the session variable.
+		$payload = '{"objects":[{"base_object_revision":'.$this->object_base_id.',"object_key":"'.$this->deviceid.'","op":"MERGE","value":{"hot_water_boost_time_to_end":'.$epooch.'}}]}';
 
-	public function house_state_set($state)
-	{
-		switch ($state)
-		{
-			case 'away':
-				$away = true;
-				break;
-			case 'home':
-				$away = false;
-				break;
-			default:
-				throw new Exception('Invalid state given: "' . $state . '"');
+		//make the request
+		$this->curlPost($this->transport_url . '/v5/put', $payload);
+		
+		// verify the change!
+		$status = $this->getHotWaterStatus();
+		
+		if($status['hot_water_boost_time_to_end']==$epooch) {
+		    $return = array("success"=>true,"code"=>200,"data"=>"Boom, hot water changed. Or you set it to the same as before.");
+		} else {
+		    $return = array("error"=>array( "code"=>400, "text"=>"Bad Request", "message"=>"For some reason, the hot water was not changed" ));
 		}
-
-		$status = $this->status_get();
-
-		$structure_id = $status->user->{$this->user_id}->structures[0];
-		$payload = json_encode(array('away_timestamp' => time(), 'away' => $away, 'away_setter' => 0));
-		return $this->curlPost($this->transport_url . '/v2/put/' . $structure_id, $payload);
+		echo json_encode($return);
+		
 	}
-
-	public function house_state_get()
-	{
-		$status = $this->status_get();
-
-		$structure = $status->user->{$this->user_id}->structures[0];
-		list (,$structure_id) = explode('.', $structure);
-		return ($status->structure->{$structure_id}->away ? 'away' : 'home');
+	
+	public function cancelHotWaterBoost() {
+		
+		// to turn the hot water off, you need set boost time to 0
+		$this->setHotWaterBoost(0);
+		
 	}
-
-	public function temperature_set($temp)
-	{
-		$status = $this->status_get();
-
-		$structure = $status->user->{$this->user_id}->structures[0];
-		list (,$structure_id) = explode('.', $structure);
-		$device = $status->structure->{$structure_id}->devices[0];
-		list (,$device_serial) = explode('.', $device);
-		$temperature_scale = $status->device->{$device_serial}->temperature_scale;
-
-		if ($temperature_scale == "F")
-		{
-			$target_temp_celsius = (($temp - 32) / 1.8);
-		}
-		else
-		{
-			$target_temp_celsius = $temp;
-		}
-
-		$payload = json_encode(array('target_change_pending' => true, 'target_temperature' => $target_temp_celsius));
-		return $this->curlPost($this->transport_url . '/v2/put/shared.' . $device_serial, $payload);
-	}
-
-	public function status_get()
+	
+	// this function is to verify that the setting has been applied
+	public function getHotWaterStatus()
 	{
 		$response = $this->curlGet($this->transport_url . '/v2/mobile/user.' . $this->user_id);
 
-		if (($json = json_decode($response)) === false)
+		if (($json = json_decode($response, true)) === false)
 			throw new Exception('Unable to gather the status from Nest');
-
-		return $json;
+		$device_serial = str_replace("device.","",$this->deviceid);
+		
+		return array("hot_water_active"=>$json['device'][$device_serial]['hot_water_active'],"hot_water_boost_time_to_end"=>$json['device'][$device_serial]['hot_water_boost_time_to_end']);
 	}
 
 	private function curlGet($url, $referer = null, $headers = null)
