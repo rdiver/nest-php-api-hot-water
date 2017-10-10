@@ -1,4 +1,4 @@
-# Nest PHP API (unofficial)
+# Nest PHP API to control Hot Water (unofficial)
 
 PHP API to control Hot Water for the Nest Thermostat (UK)
 
@@ -7,6 +7,8 @@ https://nestdevelopers.io/t/api-for-hot-water-control-3rd-gen-nest-thermostat/19
 https://nestdevelopers.io/t/hot-water-boost-api-is-there-one/626
 https://nestdevelopers.io/t/why-does-the-api-still-not-control-hot-water/862
 and more recently https://nestdevelopers.io/t/nest-hot-water-api/931
+
+My aim was to keep it as simple as possible, not my best work nor is it commented well but it works. Might neaten it in the future.
 
 I will update this page to include the information I post on my blog but for now I've not written it :)
 
