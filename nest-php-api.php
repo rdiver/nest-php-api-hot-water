@@ -67,14 +67,14 @@ class Nest
 		} else {
 		    $return = array("error"=>array( "code"=>400, "text"=>"Bad Request", "message"=>"For some reason, the hot water was not changed" ));
 		}
-		echo json_encode($return);
+		return json_encode($return);
 		
 	}
 	
 	public function cancelHotWaterBoost() {
 		
 		// to turn the hot water off, you need set boost time to 0
-		$this->setHotWaterBoost(0);
+		return $this->setHotWaterBoost(0);
 		
 	}
 	
