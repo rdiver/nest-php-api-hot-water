@@ -1,6 +1,8 @@
 <?php
-
+// Edit these variables
 $access_key = "10i7P4D2sb";
+$nest_username = "joe@blogs.com";
+$nest_password = "password";
 
 require_once('nest-php-api.php');
 
@@ -12,8 +14,7 @@ if (empty($_GET['key'])) {
 } 
 // If it has check if it is correct
 else if ($_GET['key']==$access_key) {
-
-	$nest = new Nest("joe@blogs.com",'password');
+	$nest = new Nest($nest_username,$nest_password);
 	$return = $nest->setHotWaterBoost(60);
 } 
 //If not correct one has been passed but it is wrong
