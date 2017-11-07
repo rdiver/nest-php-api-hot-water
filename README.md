@@ -12,6 +12,8 @@ My aim was to keep it as simple as possible, not my best work nor is it commente
 Thanks to Andy Blyler for his original curl functions and work. https://github.com/ablyler/nest-php-api
 
 I will update this page to include the information I post on my blog but for now I've not written it :)
+Blog post -> http://www.aimlesswandering.uk/web/2017/11/nest-thermostat-hot-water-controlled-by-alexa/
+
 
 ## Usage
 
