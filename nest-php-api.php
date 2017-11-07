@@ -8,6 +8,8 @@ class Nest
 	private $cookieFile;
 	private $object_base_id;
 	private $deviceid;
+	private $user_id;
+	private $transport_url;
 
 	public function __construct($username, $password, $debug = false)
 	{
@@ -33,7 +35,8 @@ class Nest
 		// THIS HAS ONLY BEEN TESTED IN A SYSTEM WITH ONE NEST!!!
 		// Reverse engineered from the website version.
 		$payload = '{"known_bucket_types":["device"],"known_bucket_versions":[]}';
-		$response = $this->curlPost('https://home.nest.com/api/0.1/user/2992035/app_launch', $payload);
+		$url = 'https://home.nest.com/api/0.1/user/'.$this->user_id.'/app_launch';
+		$response = $this->curlPost($url, $payload);
 		$response = json_decode($response, true);
 		
 		// Get device id and revision of the first device.
