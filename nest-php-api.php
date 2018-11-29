@@ -25,7 +25,10 @@ class Nest
 		
 		if (($json = json_decode($response)) === false)
 			throw new Exception('Unable to connect to Nest');
-
+		
+		if (!isset($json->access_token))
+			throw new Exception('Login error  '.$response);
+			
 		// Stash information needed to make subsequence requests
 		$this->access_token = $json->access_token;
 		$this->user_id = $json->userid;
@@ -144,6 +147,11 @@ class Nest
 		// curl_setopt($ch, CURLOPT_VERBOSE, true);
 
 		$html = curl_exec($ch);
+
+		if(curl_errno($ch) != 0)
+		{
+			throw new Exception("Error during POST of '$url': " . curl_error($ch));
+		}
 
 		$this->lastURL = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
 		$this->lastStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
