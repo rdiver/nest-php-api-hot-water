@@ -1,3 +1,9 @@
+# UPDATE 15/11/2019
+
+Sorry everyone, Google has broken this and added a reCaptcha to the login page that means that automation of logging in is now well and truly broken. It was great while it lasted but I don't think it will be fixable.
+
+---
+
 # Nest PHP API to control Hot Water (unofficial)
 
 PHP API to control Hot Water for the Nest Thermostat (UK)
