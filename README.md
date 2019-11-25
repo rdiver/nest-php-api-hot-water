@@ -4,6 +4,15 @@ Sorry everyone, Google has broken this and added a reCaptcha to the login page t
 
 ---
 
+UPDATE 25/11/2019
+
+Malcolm has come up with an android workaround thats worth a read dated. November 20, 2019 at 3:12 pm
+http://www.aimlesswandering.uk/web/2017/11/nest-thermostat-hot-water-controlled-by-alexa/
+
+I have also found another way that I will post once I have a more robust script. It uses headless chrome, python and selenium.
+
+---
+
 # Nest PHP API to control Hot Water (unofficial)
 
 PHP API to control Hot Water for the Nest Thermostat (UK)
