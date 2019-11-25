@@ -1,10 +1,10 @@
-# UPDATE 15/11/2019
+## UPDATE 15/11/2019
 
 Sorry everyone, Google has broken this and added a reCaptcha to the login page that means that automation of logging in is now well and truly broken. It was great while it lasted but I don't think it will be fixable.
 
 ---
 
-UPDATE 25/11/2019
+## UPDATE 25/11/2019
 
 Malcolm has come up with an android workaround thats worth a read dated. November 20, 2019 at 3:12 pm
 http://www.aimlesswandering.uk/web/2017/11/nest-thermostat-hot-water-controlled-by-alexa/
