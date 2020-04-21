@@ -1,3 +1,12 @@
+## Update 21/04/2020
+This is retired. If you want to do it use the following API. It's epic!!!
+https://github.com/gboudreau/nest-api
+
+To get it working with Nest login, just need to do the following.
+https://gist.github.com/gboudreau/8b8851a9c99140b6234856bbc80a2d24
+
+I'll add details of how I integrate it with Alexa later.
+
 ## UPDATE 15/11/2019
 
 Sorry everyone, Google has broken this and added a reCaptcha to the login page that means that automation of logging in is now well and truly broken. It was great while it lasted but I don't think it will be fixable.
